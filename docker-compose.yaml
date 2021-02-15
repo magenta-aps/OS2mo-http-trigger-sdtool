@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    command: '/start-reload.sh'
+    ports:
+      - "5011:80"
+    volumes:
+      - ./app:/app
