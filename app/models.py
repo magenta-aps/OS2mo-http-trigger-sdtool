@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Magenta ApS
+#
+# SPDX-License-Identifier: MPL-2.0
+
 from uuid import UUID
 
 from pydantic import BaseModel
