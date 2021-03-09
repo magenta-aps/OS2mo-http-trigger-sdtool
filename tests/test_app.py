@@ -15,7 +15,7 @@ class AppTests(TestCase):
         self.app = app
         self.client = TestClient(app)
 
-    def test_triggers():
+    def test_triggers(self):
         response = client.get("/triggers")
         self.assertEqual(response.status_code, 200)
         payload = response.json()
@@ -24,7 +24,7 @@ class AppTests(TestCase):
         self.assertEqual(trigger["url"], "/triggers/ou/edit")
         self.assertEqual(trigger["role_type"], "org_unit")
 
-    def test_triggers():
+    def test_ou_edit(self):
         response = client.post("/triggers/ou/edit", json={
                 "event_type": "ON_BEFORE",
                 "request": {},
