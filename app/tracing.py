@@ -28,7 +28,7 @@ def setup_instrumentation(app):
     _TRACE_PROVIDER = TracerProvider()
     trace.set_tracer_provider(_TRACE_PROVIDER)
 
-    if settings.jaeger_hostname:
+    if settings.jaeger_hostname:  # pragma: no cover
         _JAEGER_EXPORTER = jaeger.JaegerSpanExporter(
             service_name=settings.jaeger_service,
             agent_host_name=settings.jaeger_hostname,
