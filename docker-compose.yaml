@@ -9,7 +9,12 @@ services:
     command: '/start-reload.sh'
     container_name: http_trigger_example
     environment:
-        CONFIGURED_VALUE: "test"
+      MORA_URL: https://morademo.magenta.dk
+
+      SD_USERNAME: 'SYSYUSER01'
+      SD_PASSWORD: 'password1'
+      SD_INSTITUTION: 'ID'
+
 #      JAEGER_HOSTNAME: "jaeger"
     ports:
       - "5011:80"

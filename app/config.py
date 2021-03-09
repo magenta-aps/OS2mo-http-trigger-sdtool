@@ -1,16 +1,23 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-
 from typing import Optional
+from uuid import UUID
 
-from pydantic import BaseSettings
+from pydantic import BaseSettings, HttpUrl
+from pydantic.tools import parse_obj_as
 
 from app.pydantic_types import Domain, Port
 
 
 class Settings(BaseSettings):
-    configured_value: str = "TriggerExample"
+    mora_url: HttpUrl = parse_obj_as(HttpUrl, "https://morademo.magenta.dk/")
+    saml_token: Optional[UUID] = None
+
+    sd_username: str
+    sd_password: str
+    sd_institution: str
+    sd_base_url: HttpUrl = parse_obj_as(HttpUrl, "https://service.sd.dk/sdws/")
 
     jaeger_service: str = "TriggerExample"
     jaeger_hostname: Optional[Domain] = None
