@@ -2,4 +2,7 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
--r requirements/common.txt
+-r common.txt
+mypy
+black
+isort

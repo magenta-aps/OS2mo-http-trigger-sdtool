@@ -1,8 +1,19 @@
+import sys
+
+sys.path.insert(0, "/")
 from typing import List
 
 from fastapi import FastAPI
-from os2mo_http_trigger_protocol import (EventType, MOTriggerPayload,
-                                         MOTriggerRegister, RequestType)
+from os2mo_http_trigger_protocol import (
+    EventType,
+    MOTriggerPayload,
+    MOTriggerRegister,
+    RequestType,
+)
+from structlog import get_logger
+
+from app.tracing import setup_instrumentation, setup_logging
+from app.config import get_settings
 
 app = FastAPI()
 
@@ -34,4 +45,10 @@ def triggers():
 )
 async def triggers_ou_create(payload: MOTriggerPayload):
     """Fired when an OU has been created."""
-    print("OU Edit:", payload)
+    logger = get_logger()
+    logger.info("triggers_ou_create", payload=payload.json())
+    return {"configured_value": get_settings().configured_value}
+
+
+app = setup_instrumentation(app)
+setup_logging()
