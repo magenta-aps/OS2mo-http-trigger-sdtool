@@ -32,6 +32,7 @@ def ensure_settings_file():
 
     settings_path = "/opt/os2mo-data-import-and-export/settings/settings.json"
     if exists(settings_path):
+        logger.debug("Early return from ensure_settings_file")
         return False
 
     settings = get_settings().dict()
@@ -43,6 +44,7 @@ def ensure_settings_file():
         "integrations.SD_Lon.sd_password": "sd_password",
         "integrations.SD_Lon.base_url": "sd_base_url",
         "integrations.SD_Lon.institution_identifier": "sd_institution",
+        "integrations.SD_Lon.import.too_deep": "sd_too_deep",
     }
     dipex_settings = {
         dipex_key: str(settings[app_key])
@@ -50,6 +52,7 @@ def ensure_settings_file():
         if settings[app_key] is not None
     }
 
+    logger.info("Creating dipex settings file")
     with open(settings_path, "w") as settings_file:
         json.dump(dipex_settings, settings_file)
     return True
@@ -76,9 +79,10 @@ def fix_departments(uuid: UUID):
         raise HTTPException(detail={"error": str(e)}, status_code=500)
     except subprocess.CalledProcessError as e:
         logger.exception("Script error occurred", exc=e)
-        print(e.stdout.decode("utf-8"))
         raise HTTPException(detail={"error": str(e)}, status_code=500)
-    return {"output": result.stdout.decode("utf-8").strip()}
+    script_stdout = result.stdout.decode("utf-8").strip()
+    logger.info("Script successful", stdout=script_stdout)
+    return {"output": script_stdout}
 
 
 @app.get(
@@ -115,7 +119,7 @@ async def triggers_ou_refresh(payload: MOTriggerPayload):
 
 
 @app.post(
-    "/",
+    "/sdtool",
     tags=["Old SDTool API"],
     summary="Update the specified MO unit according to SD data",
     response_model=Dict[str, str],

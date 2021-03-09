@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseSettings, HttpUrl
@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     sd_password: str
     sd_institution: str
     sd_base_url: HttpUrl = parse_obj_as(HttpUrl, "https://service.sd.dk/sdws/")
+    sd_too_deep: List[str] = []
 
     jaeger_service: str = "TriggerExample"
     jaeger_hostname: Optional[Domain] = None

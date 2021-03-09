@@ -24,8 +24,15 @@ Configure `MO`'s HTTP Trigger support to connect to our container, by adding:
 [triggers.http_trigger]
 enabled = true
 http_endpoints = [
-    "http_trigger_example:5011"
+    "http_trigger_sdtool:5011"
 ]
+```
+To `MO`'s `.toml` configuration file.
+
+OR configure `MO`'s SDTool specific code to connect to our container, by adding:
+```
+[external_integration]
+org_unit = "http://http_trigger_sdtool:5011/sdtool"
 ```
 To `MO`'s `.toml` configuration file.
 
