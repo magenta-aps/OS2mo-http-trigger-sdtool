@@ -27,8 +27,13 @@ logger = get_logger()
 app = FastAPI()
 
 
-@app.on_event("startup")
-async def startup_event():
+def ensure_settings_file():
+    from os.path import exists
+
+    settings_path = "/opt/os2mo-data-import-and-export/settings/settings.json"
+    if exists(settings_path):
+        return False
+
     settings = get_settings().dict()
 
     settings_mapping = {
@@ -44,16 +49,17 @@ async def startup_event():
         for dipex_key, app_key in settings_mapping.items()
         if settings[app_key] is not None
     }
-    print(dipex_settings)
 
-    settings_path = "/opt/os2mo-data-import-and-export/settings/settings.json"
     with open(settings_path, "w") as settings_file:
         json.dump(dipex_settings, settings_file)
+    return True
 
 
 def fix_departments(uuid: UUID):
     import os
     import subprocess
+
+    ensure_settings_file()
 
     os.environ["SCRIPT_NAME"] = "/sdtool"
     script = ["/app/update_unit.sh"]

@@ -2,18 +2,28 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
+from test.support import EnvironmentVarGuard
 from unittest import TestCase
+from unittest.mock import patch
+
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.main import app
-
 
 class AppTests(TestCase):
     def setUp(self):
-        self.app = app
-        self.client = TestClient(app)
+        self.env = EnvironmentVarGuard()
+        self.env.set("MORA_URL", "http://example.org")
+        self.env.set("SD_USERNAME", "sd_username")
+        self.env.set("SD_PASSWORD", "sd_password")
+        self.env.set("SD_INSTITUTION", "sd_institution")
+
+        with self.env:
+            from app.main import app
+
+            self.app = app
+            self.client = TestClient(app)
 
     def test_triggers(self):
         response = self.client.get("/triggers")
@@ -21,20 +31,27 @@ class AppTests(TestCase):
         payload = response.json()
         self.assertEqual(len(payload), 1)
         trigger = payload[0]
-        self.assertEqual(trigger["url"], "/triggers/ou/edit")
+        self.assertEqual(trigger["url"], "/triggers/ou/refresh")
         self.assertEqual(trigger["role_type"], "org_unit")
 
-    def test_ou_edit(self):
-        response = self.client.post("/triggers/ou/edit", json={
+    @patch('app.main.fix_departments')
+    def test_ou_edit(self, fix_departments):
+        expected = {"status": "431"}
+        fix_departments.return_value = expected
+
+        uuid = "fb2d158f-114e-5f67-8365-2c520cf10b58"
+        response = self.client.post(
+            "/triggers/ou/refresh",
+            json={
                 "event_type": "ON_BEFORE",
-                "request": {},
-                "request_type": "EDIT",
+                "request": {"uuid": uuid},
+                "request_type": "REFRESH",
                 "role_type": "org_unit",
-                "uuid": "fb2d158f-114e-5f67-8365-2c520cf10b58",
-            }
+                "uuid": uuid
+            },
         )
+        fix_departments.assert_called_with(uuid)
+
         self.assertEqual(response.status_code, 200)
         payload = response.json()
-        self.assertEqual(payload, {
-            "configured_value": "TriggerExample"
-        })
+        self.assertEqual(payload, expected)
