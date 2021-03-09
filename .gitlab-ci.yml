@@ -24,7 +24,7 @@ stages:
 variables:
   # Project variables
   RELEASE_REGISTRY: docker.io
-  RELEASE_REGISTRY_IMAGE: index.docker.io/magentaaps/os2mo-http-trigger-example
+  RELEASE_REGISTRY_IMAGE: index.docker.io/magentaaps/os2mo-http-trigger-sdtool
 
   IMAGE_SHA: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}
 
