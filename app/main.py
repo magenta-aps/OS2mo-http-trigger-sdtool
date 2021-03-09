@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Magenta ApS
+#
+# SPDX-License-Identifier: MPL-2.0
+
 import sys
 
 sys.path.insert(0, "/")
@@ -12,8 +16,8 @@ from os2mo_http_trigger_protocol import (
 )
 from structlog import get_logger
 
-from app.tracing import setup_instrumentation, setup_logging
 from app.config import get_settings
+from app.tracing import setup_instrumentation, setup_logging
 
 app = FastAPI()
 

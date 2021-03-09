@@ -1,6 +1,8 @@
-[//]: # (SPDX-FileCopyrightText: Magenta ApS)
-[//]: # ()
-[//]: # (SPDX-License-Identifier: MPL-2.0)
+<!--
+SPDX-FileCopyrightText: Magenta ApS
+
+SPDX-License-Identifier: MPL-2.0
+-->
 
 # OS2mo HTTP Trigger Example
 
