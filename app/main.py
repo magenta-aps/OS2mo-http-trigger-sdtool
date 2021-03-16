@@ -6,6 +6,9 @@ import sys
 
 sys.path.insert(0, "/")
 import json
+import os
+import subprocess
+from os.path import exists
 from typing import Dict, List
 from uuid import UUID
 
@@ -28,8 +31,6 @@ app = FastAPI()
 
 
 def ensure_settings_file():
-    from os.path import exists
-
     settings_path = "/opt/os2mo-data-import-and-export/settings/settings.json"
     if exists(settings_path):
         logger.debug("Early return from ensure_settings_file")
@@ -59,9 +60,6 @@ def ensure_settings_file():
 
 
 def fix_departments(uuid: UUID):
-    import os
-    import subprocess
-
     ensure_settings_file()
 
     os.environ["SCRIPT_NAME"] = "/sdtool"
