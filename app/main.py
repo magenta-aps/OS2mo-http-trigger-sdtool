@@ -9,10 +9,11 @@ import json
 import os
 import subprocess
 from os.path import exists
-from typing import Dict, List
+from typing import Dict, List, Any
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from os2mo_http_trigger_protocol import (
     EventType,
     MOTriggerPayload,
@@ -20,14 +21,63 @@ from os2mo_http_trigger_protocol import (
     RequestType,
 )
 from structlog import get_logger
+from structlog.processors import KeyValueRenderer
 
 from app.config import get_settings
 from app.models import MOSDToolPayload
-from app.tracing import setup_instrumentation, setup_logging
+from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 
 logger = get_logger()
 
-app = FastAPI()
+
+tags_metadata = [
+    {
+        "name": "Meta",
+        "description": "Various meta endpoints",
+    },
+    {
+        "name": "SDTool API",
+        "description": "Old School SDTool API.",
+    },
+    {
+        "name": "Trigger API",
+        "description": "Trigger API for mo-triggers.",
+        "externalDocs": {
+            "description": "OS2MO Trigger docs",
+            "url": "https://os2mo.readthedocs.io/en/development/api/triggers.html",
+        },
+    },
+]
+app = FastAPI(
+    title="SDTool",
+    description="API to update MO according to SD.",
+    version="0.0.1",
+    openapi_tags=tags_metadata,
+)
+
+
+@app.on_event("startup")
+async def startup_event():
+    # Called for validation side-effect
+    get_settings()
+
+
+@app.get(
+    "/", response_class=RedirectResponse, tags=["Meta"], summary="Redirect to /docs"
+)
+def root() -> RedirectResponse:
+    """Redirect to /docs."""
+    return RedirectResponse(url="/docs")
+
+
+@app.get("/info", tags=["Meta"], summary="Print info about this entity")
+def info() -> Dict[str, Any]:
+    """Print info about this entity."""
+    return {
+        "title": app.title,
+        "description": app.description,
+        "version": app.version,
+    }
 
 
 def ensure_settings_file():
@@ -118,7 +168,7 @@ async def triggers_ou_refresh(payload: MOTriggerPayload):
 
 @app.post(
     "/sdtool",
-    tags=["Old SDTool API"],
+    tags=["SDTool API"],
     summary="Update the specified MO unit according to SD data",
     response_model=Dict[str, str],
     response_description=("Successful Response" + "<br/>" + "Script output."),
@@ -129,4 +179,7 @@ def oldendpoint(payload: MOSDToolPayload):
 
 
 app = setup_instrumentation(app)
-setup_logging()
+
+from structlog.contextvars import merge_contextvars
+
+setup_logging(processors=[merge_contextvars, KeyValueRenderer()])
