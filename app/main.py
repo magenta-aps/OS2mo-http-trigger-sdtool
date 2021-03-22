@@ -9,11 +9,12 @@ import json
 import os
 import subprocess
 from os.path import exists
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
+from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 from os2mo_http_trigger_protocol import (
     EventType,
     MOTriggerPayload,
@@ -25,7 +26,6 @@ from structlog.processors import KeyValueRenderer
 
 from app.config import get_settings
 from app.models import MOSDToolPayload
-from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 
 logger = get_logger()
 

@@ -50,7 +50,7 @@ TypeCheck Python:
   before_script:
     - pip3 install -r requirements/lint.txt
   script:
-    - python -m mypy --ignore-missing-imports --strict-optional --no-implicit-optional app/
+    - python -m mypy --ignore-missing-imports --strict-optional --no-implicit-optional app/ tests/
 
 Lint Python:
   <<: *lint-default
@@ -58,7 +58,7 @@ Lint Python:
     - pip3 install -r requirements/lint.txt
   script:
     - python -m black --diff --check app/
-    - python -m isort --profile black --diff --check-only app/
+    - python -m isort --profile black --diff --check-only app/ tests/
 
 Lint Dockerfiles:
   <<: *lint-default

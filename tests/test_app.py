@@ -6,7 +6,6 @@ from test.support import EnvironmentVarGuard
 from unittest import TestCase
 from unittest.mock import patch
 
-
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -34,7 +33,7 @@ class AppTests(TestCase):
         self.assertEqual(trigger["url"], "/triggers/ou/refresh")
         self.assertEqual(trigger["role_type"], "org_unit")
 
-    @patch('app.main.fix_departments')
+    @patch("app.main.fix_departments")
     def test_ou_edit(self, fix_departments):
         expected = {"status": "431"}
         fix_departments.return_value = expected
@@ -47,7 +46,7 @@ class AppTests(TestCase):
                 "request": {"uuid": uuid},
                 "request_type": "REFRESH",
                 "role_type": "org_unit",
-                "uuid": uuid
+                "uuid": uuid,
             },
         )
         fix_departments.assert_called_with(uuid)
