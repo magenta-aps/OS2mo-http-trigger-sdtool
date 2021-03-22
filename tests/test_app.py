@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
-from test.support import EnvironmentVarGuard
 from unittest import TestCase
 from unittest.mock import patch
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+
+from tests.utils import EnvironmentVarGuard
 
 
 class AppTests(TestCase):
