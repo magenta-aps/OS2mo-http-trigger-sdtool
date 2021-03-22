@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: Magenta ApS
+#
+# SPDX-License-Identifier: MPL-2.0
+
+structlog
+
+os2mo-http-trigger-protocol==0.0.3
