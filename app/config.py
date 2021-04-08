@@ -9,7 +9,7 @@ from pydantic.tools import parse_obj_as
 
 
 class Settings(BaseSettings):
-    mora_url: HttpUrl = parse_obj_as(AnyHttpUrl, "https://morademo.magenta.dk/")
+    mora_url: AnyHttpUrl = parse_obj_as(AnyHttpUrl, "https://morademo.magenta.dk/")
     saml_token: Optional[UUID] = None
 
     sd_username: str
