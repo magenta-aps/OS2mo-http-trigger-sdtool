@@ -150,6 +150,7 @@ def triggers():
             "request_type": RequestType.REFRESH,
             "role_type": "org_unit",
             "url": "/triggers/ou/refresh",
+            "timeout": 60,
         }
     ]
 
