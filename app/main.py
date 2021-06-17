@@ -30,7 +30,7 @@ from app.models import MOSDToolPayload
 logger = get_logger()
 
 
-tags_metadata = [
+tags_metadata: List[Dict[str, Any]] = [
     {
         "name": "Meta",
         "description": "Various meta endpoints",
