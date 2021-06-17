@@ -3,5 +3,8 @@
 # SPDX-License-Identifier: MPL-2.0
 
 structlog
+aiohttp
 
+more-itertools==8.6.0
+os2mo-fastapi-utils==0.0.3
 os2mo-http-trigger-protocol==0.0.3
