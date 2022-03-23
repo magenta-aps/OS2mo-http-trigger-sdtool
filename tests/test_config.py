@@ -75,3 +75,16 @@ def test_auth_server_must_be_url():
 def test_sd_password_is_secret():
     settings = Settings.parse_obj(MANDATORY_SETTINGS)
     assert isinstance(settings.sd_password, SecretStr)
+
+
+def test_value_error_not_raised_when_keycloak_settings_ok():
+    settings = deepcopy(MANDATORY_SETTINGS)
+    settings.update(
+        {
+            "client_secret": "client_secret",
+            "client_id": "client_id",
+            "auth_realm": "auth_realm",
+            "auth_server": "http://keycloak-service:8080/auth"
+        }
+    )
+    assert Settings.parse_obj(settings)
