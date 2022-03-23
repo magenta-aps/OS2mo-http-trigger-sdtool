@@ -32,9 +32,10 @@ class Settings(BaseSettings):
             raise ValueError("SAML and OIDC cannot be used simultaneously")
         if values["client_secret"] is not None:
             mandatory_settings = ("auth_server", "auth_realm", "client_id")
-            missing_settings = filter(
-                lambda setting: values.get(setting) is None, mandatory_settings
+            missing_settings = tuple(
+                filter(lambda setting: values.get(setting) is None, mandatory_settings)
             )
+
             if missing_settings:
                 raise ValueError(
                     "The following ENVs are missing: " + ", ".join(missing_settings)
