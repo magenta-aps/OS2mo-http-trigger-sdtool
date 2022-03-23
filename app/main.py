@@ -87,6 +87,7 @@ def ensure_settings_file():
         return False
 
     settings = get_settings().dict()
+    settings["sd_password"] = get_settings().sd_password.get_secret_value()
 
     settings_mapping = {
         "crontab.SAML_TOKEN": "saml_token",
