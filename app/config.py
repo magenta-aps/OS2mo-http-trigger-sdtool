@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
+from functools import lru_cache
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -44,5 +45,6 @@ class Settings(BaseSettings):
         return values
 
 
+@lru_cache()
 def get_settings(**overrides) -> Settings:
     return Settings(**overrides)

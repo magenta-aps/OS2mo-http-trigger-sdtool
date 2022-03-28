@@ -4,6 +4,7 @@
 
 structlog
 aiohttp
+httpx
 
 more-itertools==8.6.0
 os2mo-fastapi-utils==0.0.3

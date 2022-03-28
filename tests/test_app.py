@@ -5,7 +5,6 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from tests.utils import EnvironmentVarGuard

@@ -25,6 +25,7 @@ from structlog import get_logger
 from structlog.processors import KeyValueRenderer
 
 from app.config import get_settings
+from app.kubernetes import kubernetes_router
 from app.models import MOSDToolPayload
 
 logger = get_logger()
@@ -180,6 +181,7 @@ def oldendpoint(payload: MOSDToolPayload):
     return fix_departments(payload.uuid)
 
 
+app.include_router(kubernetes_router, prefix="/kubernetes")
 app = setup_instrumentation(app)
 
 from structlog.contextvars import merge_contextvars
