@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
-cd /opt/os2mo-data-import-and-export/
-export PYTHONPATH=$PWD:$PYTHONPATH
+cd /opt/os2mo-data-import-and-export/integrations/SD_Lon
 
-python integrations/SD_Lon/fix_departments.py --department-uuid="$1"
+poetry run python -m sdlon.fix_departments --department-uuid="$1"
