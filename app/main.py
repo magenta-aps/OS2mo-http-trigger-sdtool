@@ -92,10 +92,10 @@ def ensure_settings_file():
     settings_mapping = {
         "crontab.SAML_TOKEN": "saml_token",
         "mora.base": "mora_url",
-        "integrations.SD_Lon.sd_user": "sd_username",
+        "integrations.SD_Lon.sd_user": "sd_user",
         "integrations.SD_Lon.sd_password": "sd_password",
         "integrations.SD_Lon.base_url": "sd_base_url",
-        "integrations.SD_Lon.institution_identifier": "sd_institution",
+        "integrations.SD_Lon.institution_identifier": "sd_institution_identifier",
         "integrations.SD_Lon.import.too_deep": "sd_too_deep",
     }
     dipex_settings = {
