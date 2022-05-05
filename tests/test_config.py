@@ -12,9 +12,9 @@ from pydantic import SecretStr, ValidationError
 from app.config import Settings
 
 MANDATORY_SETTINGS = {
-    "sd_username": "username",
-    "sd_password": "passowrd",
-    "sd_institution": "institution"
+    "sd_user": "username",
+    "sd_password": "password",
+    "sd_institution_identifier": "institution"
 }
 
 
@@ -88,3 +88,15 @@ def test_value_error_not_raised_when_keycloak_settings_ok():
         }
     )
     assert Settings.parse_obj(settings)
+
+
+def test_set_envs_from_salt_settings():
+    salt_settings = {
+        "sd_username": "username",
+        "sd_password": "password",
+        "sd_institution": "institution"
+    }
+    settings = Settings.parse_obj(salt_settings)
+    assert settings.sd_user == "username"
+    assert settings.sd_password.get_secret_value() == "password"
+    assert settings.sd_institution_identifier == "institution"

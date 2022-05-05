@@ -5,7 +5,6 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from tests.utils import EnvironmentVarGuard
@@ -15,9 +14,9 @@ class AppTests(TestCase):
     def setUp(self):
         self.env = EnvironmentVarGuard()
         self.env.set("MORA_URL", "http://example.org")
-        self.env.set("SD_USERNAME", "sd_username")
+        self.env.set("SD_USER", "sd_user")
         self.env.set("SD_PASSWORD", "sd_password")
-        self.env.set("SD_INSTITUTION", "sd_institution")
+        self.env.set("SD_INSTITUTION_IDENTIFIER", "sd_institution_identifier")
 
         with self.env:
             from app.main import app

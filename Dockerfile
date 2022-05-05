@@ -26,9 +26,7 @@ RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
 # These are not used but have to be there... don't worry about it - it's just DIPEX...
 ENV SD_GLOBAL_FROM_DATE=2000-01-01
-ENV SD_INSTITUTION_IDENTIFIER=notused
 ENV SD_IMPORT_RUN_DB=/not/used
-ENV SD_USER=notused
 ENV SD_JOB_FUNCTION=EmploymentName
 ENV SD_MONTHLY_HOURLY_DIVIDE=1
 

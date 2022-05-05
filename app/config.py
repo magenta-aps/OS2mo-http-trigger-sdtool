@@ -18,9 +18,15 @@ class Settings(BaseSettings):
     client_id: Optional[str] = None
     client_secret: Optional[str] = None
 
-    sd_username: str
+    # Used by Helm chart
+    sd_user: str
+    sd_institution_identifier: str
+
+    # Used by Salt
+    sd_username: Optional[str] = None
+    sd_institution: Optional[str] = None
+
     sd_password: SecretStr
-    sd_institution: str
     sd_base_url: HttpUrl = parse_obj_as(HttpUrl, "https://service.sd.dk/sdws/")
     sd_too_deep: List[str] = []
 
@@ -41,6 +47,14 @@ class Settings(BaseSettings):
                     "The following ENVs are missing: " + ", ".join(missing_settings)
                 )
 
+        return values
+
+    @root_validator(pre=True)
+    def set_envs_from_salt_settings(cls, values: Dict[str, Any]):
+        if values.get("sd_username") is not None:
+            values["sd_user"] = values["sd_username"]
+        if values.get("sd_institution") is not None:
+            values["sd_institution_identifier"] = values["sd_institution"]
         return values
 
 
