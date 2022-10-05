@@ -14,7 +14,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/
-RUN git clone -b 2.32.5 https://github.com/OS2mo/os2mo-data-import-and-export \
+RUN git clone -b 3.5.2 https://github.com/OS2mo/os2mo-data-import-and-export \
  && pip3 install --no-cache-dir poetry==${POETRY_VERSION}
 
 WORKDIR /opt/os2mo-data-import-and-export/integrations/SD_Lon
