@@ -9,7 +9,7 @@ ENV POETRY_VERSION="1.1.8"
 RUN apt-get update \
  && apt-get -y install --no-install-recommends unixodbc-dev=2.3.6-0.1+b1 \
     freetds-dev=1.2.3-1 unixodbc=2.3.6-0.1+b1 tdsodbc=1.2.3-1 \
-    libkrb5-dev=1.18.3-6+deb11u1 libmariadb-dev=1:10.5.15-0+deb11u1 \
+    libkrb5-dev=1.18.3-6+deb11u2 libmariadb-dev=1:10.5.15-0+deb11u1 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
