@@ -14,7 +14,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/
-RUN git clone -b 3.5.2 https://github.com/OS2mo/os2mo-data-import-and-export \
+RUN git clone -b 3.14.2 https://github.com/OS2mo/os2mo-data-import-and-export \
  && pip3 install --no-cache-dir poetry==${POETRY_VERSION}
 
 WORKDIR /opt/os2mo-data-import-and-export/integrations/SD_Lon
@@ -29,6 +29,8 @@ ENV SD_GLOBAL_FROM_DATE=2000-01-01
 ENV SD_IMPORT_RUN_DB=/not/used
 ENV SD_JOB_FUNCTION=EmploymentName
 ENV SD_MONTHLY_HOURLY_DIVIDE=1
+
+ENV TZ="Europe/Copenhagen"
 
 WORKDIR /app
 COPY ./app /app
