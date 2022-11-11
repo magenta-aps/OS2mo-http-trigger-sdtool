@@ -12,9 +12,7 @@ from os.path import exists
 from typing import Any, Dict, List
 from uuid import UUID
 
-from fastapi import BackgroundTasks
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 from os2mo_http_trigger_protocol import (
