@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-
+import datetime
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -33,9 +33,13 @@ class AppTests(TestCase):
         self.assertEqual(trigger["url"], "/triggers/ou/refresh")
         self.assertEqual(trigger["role_type"], "org_unit")
 
+    @patch("app.main.datetime")
     @patch("app.main.fix_departments")
-    def test_ou_edit(self, fix_departments):
-        expected = {"status": "431"}
+    def test_ou_edit(self, fix_departments, mock_datatime):
+        mock_datatime.datetime.now.return_value = datetime.datetime(
+            2000, 1, 1, 12, 13
+        )
+        expected = {"msg": f"SD-Tool opdatering påbegyndt 12:13. Genindlæs siden om nogle minutter."}
         fix_departments.return_value = expected
 
         uuid = "fb2d158f-114e-5f67-8365-2c520cf10b58"

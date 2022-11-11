@@ -12,7 +12,9 @@ from os.path import exists
 from typing import Any, Dict, List
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks
+from fastapi import FastAPI
+from fastapi import HTTPException
 from fastapi.responses import RedirectResponse
 from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 from os2mo_http_trigger_protocol import (
@@ -156,11 +158,11 @@ def triggers():
     response_model=Dict[str, str],
     response_description=("Successful Response" + "<br/>" + "Script output."),
 )
-async def triggers_ou_refresh(payload: MOTriggerPayload):
+async def triggers_ou_refresh(payload: MOTriggerPayload, bg_tasks: BackgroundTasks):
     """Update the specified MO unit according to SD data"""
-    fix_departments(payload.request["uuid"])
-    start_time = datetime.datetime.now().strftime("%H:%M")
+    bg_tasks.add_task(fix_departments, payload.request["uuid"])
 
+    start_time = datetime.datetime.now().strftime("%H:%M")
     return {"msg": f"SD-Tool opdatering påbegyndt {start_time}. Genindlæs siden om nogle minutter."}
 
 
