@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Magenta ApS
 #
 # SPDX-License-Identifier: MPL-2.0
-
+import datetime
 import sys
 
 sys.path.insert(0, "/")
@@ -12,7 +12,7 @@ from os.path import exists
 from typing import Any, Dict, List
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from os2mo_fastapi_utils.tracing import setup_instrumentation, setup_logging
 from os2mo_http_trigger_protocol import (
@@ -119,19 +119,10 @@ def fix_departments(uuid: UUID):
 
     try:
         logger.info("Running script", command=script)
-        result = subprocess.run(
-            script, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
-        result.check_returncode()
-    except OSError as e:
+        subprocess.Popen(script, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except Exception as e:
         logger.exception("Script error occurred", exc=e)
         raise HTTPException(detail={"error": str(e)}, status_code=500)
-    except subprocess.CalledProcessError as e:
-        logger.exception("Script error occurred", exc=e)
-        raise HTTPException(detail={"error": str(e)}, status_code=500)
-    script_stdout = result.stdout.decode("utf-8").strip()
-    logger.info("Script successful", stdout=script_stdout)
-    return {"output": script_stdout}
 
 
 @app.get(
@@ -163,9 +154,14 @@ def triggers():
     response_model=Dict[str, str],
     response_description=("Successful Response" + "<br/>" + "Script output."),
 )
-async def triggers_ou_refresh(payload: MOTriggerPayload):
+async def triggers_ou_refresh(payload: MOTriggerPayload, bg_tasks: BackgroundTasks):
     """Update the specified MO unit according to SD data"""
-    return fix_departments(payload.request["uuid"])
+    bg_tasks.add_task(fix_departments, payload.request["uuid"])
+
+    start_time = datetime.datetime.now().strftime("%H:%M")
+    return {
+        "msg": f"SD-Tool opdatering påbegyndt {start_time}. Genindlæs siden om nogle minutter."
+    }
 
 
 @app.post(
