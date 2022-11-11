@@ -121,9 +121,7 @@ def fix_departments(uuid: UUID):
 
     try:
         logger.info("Running script", command=script)
-        subprocess.Popen(
-            script, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
+        subprocess.Popen(script, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except Exception as e:
         logger.exception("Script error occurred", exc=e)
         raise HTTPException(detail={"error": str(e)}, status_code=500)
@@ -163,7 +161,9 @@ async def triggers_ou_refresh(payload: MOTriggerPayload, bg_tasks: BackgroundTas
     bg_tasks.add_task(fix_departments, payload.request["uuid"])
 
     start_time = datetime.datetime.now().strftime("%H:%M")
-    return {"msg": f"SD-Tool opdatering påbegyndt {start_time}. Genindlæs siden om nogle minutter."}
+    return {
+        "msg": f"SD-Tool opdatering påbegyndt {start_time}. Genindlæs siden om nogle minutter."
+    }
 
 
 @app.post(
