@@ -9,7 +9,10 @@ from pydantic.tools import parse_obj_as
 
 
 class Settings(BaseSettings):
+    # Will be deprecated
     mora_url: AnyHttpUrl = parse_obj_as(AnyHttpUrl, "https://morademo.magenta.dk/")
+
+    mora_base: AnyHttpUrl = parse_obj_as(AnyHttpUrl, "http://mo-service:5000")
     saml_token: Optional[UUID] = None
 
     # Keycloak settings
@@ -21,10 +24,6 @@ class Settings(BaseSettings):
     # Used by Helm chart
     sd_user: str
     sd_institution_identifier: str
-
-    # Used by Salt
-    sd_username: Optional[str] = None
-    sd_institution: Optional[str] = None
 
     sd_password: SecretStr
     sd_base_url: HttpUrl = parse_obj_as(HttpUrl, "https://service.sd.dk/sdws/")
@@ -47,14 +46,6 @@ class Settings(BaseSettings):
                     "The following ENVs are missing: " + ", ".join(missing_settings)
                 )
 
-        return values
-
-    @root_validator(pre=True)
-    def set_envs_from_salt_settings(cls, values: Dict[str, Any]):
-        if values.get("sd_username") is not None:
-            values["sd_user"] = values["sd_username"]
-        if values.get("sd_institution") is not None:
-            values["sd_institution_identifier"] = values["sd_institution"]
         return values
 
 
