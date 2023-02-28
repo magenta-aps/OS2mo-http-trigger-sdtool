@@ -4,7 +4,7 @@
 
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
-ENV POETRY_VERSION="1.1.8"
+ENV POETRY_VERSION="1.3.2"
 
 RUN apt-get update \
  && apt-get -y install --no-install-recommends unixodbc-dev=2.3.6-0.1+b1 \
