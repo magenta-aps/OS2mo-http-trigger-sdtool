@@ -23,15 +23,9 @@ stages:
 
 variables:
   # Project variables
-  RELEASE_REGISTRY: docker.io
   RELEASE_REGISTRY_IMAGE: index.docker.io/magentaaps/os2mo-http-trigger-sdtool
 
   IMAGE_SHA: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}
-
-  IMAGE_DEV: ${RELEASE_REGISTRY_IMAGE}:dev
-  IMAGE_RC: ${RELEASE_REGISTRY_IMAGE}:rc
-  IMAGE_VERSION: ${RELEASE_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-  IMAGE_LATEST: ${RELEASE_REGISTRY_IMAGE}:latest
 
   PRODUCT: os2mo
   COMPONENT: SDTool
@@ -45,8 +39,19 @@ variables:
 .if-tag: &if-tag
   if: '$CI_COMMIT_TAG'
 
+.if-tag-semver: &if-tag-semver
+  if: '$CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/'
+
 .if-merge-request: &if-merge-request
   if: '$CI_MERGE_REQUEST_IID'
+
+.if-schedule: &if-schedule
+  if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+# Sync Conditions
+.if-merge-request-labels-dont-interrupt: &if-merge-request-labels-dont-interrupt
+  if: "$CI_MERGE_REQUEST_LABELS =~ /Pipeline::Sync::Don't Interrupt/"
+
 
 # Workflow
 ###########
@@ -62,7 +67,7 @@ include:
       - gitlab-ci-templates/common/conventional-commits.v1.yml
       - gitlab-ci-templates/common/config-updater-salt.v1.yml
       - gitlab-ci-templates/common/config-updater-flux.v1.yml
-
+      - gitlab-ci-templates/common/docker-release.v1.yml
 
 # Lint stage
 #############
@@ -155,57 +160,3 @@ Unit-test:
       - $CI_PROJECT_DIR/coverage-html
     reports:
       junit: $CI_PROJECT_DIR/junit.xml
-
-
-# Release stage
-###############
-
-.release-default: &release-default
-  stage: release
-  needs: ["Unit-test"]
-  image: alpine:3.13
-  variables:
-    GIT_STRATEGY: none # We do not need the source code
-  before_script:
-    - apk add skopeo=1.2.1-r0
-
-
-Release dev:
-  <<: *release-default
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "development"
-  script:
-    - skopeo copy
-      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
-      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
-      "docker://${IMAGE_SHA}"
-      "docker://${IMAGE_DEV}"
-
-Release rc:
-  <<: *release-default
-  rules:
-    - if: $CI_COMMIT_REF_NAME =~ /^release\/.+$/
-  script:
-    - skopeo copy
-      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
-      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
-      "docker://${IMAGE_SHA}"
-      "docker://${IMAGE_RC}"
-
-Release master:
-  <<: *release-default
-  rules:
-      # Matches <version core> from SemVer 2.0.0 BNF grammar. Ex. 2.3.4, but not 2.3.4-rc
-      - if: $CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/
-  script:
-    - skopeo copy
-      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
-      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
-      "docker://${IMAGE_SHA}"
-      "docker://${IMAGE_VERSION}"
-    - skopeo copy
-      --src-creds=${CI_REGISTRY_USER}:${CI_BUILD_TOKEN}
-      --dest-creds=${RELEASE_REGISTRY_USER}:${RELEASE_REGISTRY_PASSWORD}
-      "docker://${IMAGE_SHA}"
-      "docker://${IMAGE_LATEST}"
-
