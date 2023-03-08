@@ -39,18 +39,11 @@ variables:
 .if-tag: &if-tag
   if: '$CI_COMMIT_TAG'
 
-.if-tag-semver: &if-tag-semver
-  if: '$CI_COMMIT_TAG =~ /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/'
-
 .if-merge-request: &if-merge-request
   if: '$CI_MERGE_REQUEST_IID'
-
 .if-schedule: &if-schedule
   if: '$CI_PIPELINE_SOURCE == "schedule"'
 
-# Sync Conditions
-.if-merge-request-labels-dont-interrupt: &if-merge-request-labels-dont-interrupt
-  if: "$CI_MERGE_REQUEST_LABELS =~ /Pipeline::Sync::Don't Interrupt/"
 
 
 # Workflow
@@ -60,6 +53,7 @@ workflow:
     - <<: *if-tag
     - <<: *if-default-branch-refs
     - <<: *if-merge-request
+    - <<: *if-schedule
 
 include:
   - project: 'labs/salt-automation'
@@ -67,6 +61,7 @@ include:
       - gitlab-ci-templates/common/conventional-commits.v1.yml
       - gitlab-ci-templates/common/config-updater-salt.v1.yml
       - gitlab-ci-templates/common/config-updater-flux.v1.yml
+      - gitlab-ci-templates/common/docker-build-meta.v2.yml
       - gitlab-ci-templates/common/docker-release.v1.yml
 
 # Lint stage
@@ -113,22 +108,13 @@ REUSE compliance:
 
 # Build stage
 #############
-
 Build Image:
-  stage: build
-  needs: []
-  image:
-    # We use kaniko v0.16.0 as both v0.17.0, v0.17.1, v0.18.0 and v0.19.0 contains fatal bugs.
-    name: gcr.io/kaniko-project/executor:debug-v0.16.0
-    entrypoint: [""]
-  script:
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor
-      --cache
-      --context=$CI_PROJECT_DIR
-      --dockerfile=$CI_PROJECT_DIR/Dockerfile
-      --destination=${IMAGE_SHA}
-
+  extends:
+    - .build-docker
+  rules:
+    - <<: *if-schedule
+      when: never
+    - when: on_success
 
 # Test stage
 ############
