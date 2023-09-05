@@ -2,19 +2,20 @@
 #
 # SPDX-License-Identifier: MPL-2.0
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 
 ENV POETRY_VERSION="1.3.2"
 
 RUN apt-get update \
- && apt-get -y install --no-install-recommends unixodbc-dev=2.3.6-0.1+b1 \
-    freetds-dev=1.2.3-1 unixodbc=2.3.6-0.1+b1 tdsodbc=1.2.3-1 \
-    libkrb5-dev=1.18.3-6+deb11u3 libmariadb-dev=1:10.5.18-0+deb11u1 \
+ && apt-get -y install --no-install-recommends unixodbc-dev=2.3.11-2+deb12u1 \
+    freetds-dev=1.3.17+ds-2 unixodbc=2.3.11-2+deb12u1 tdsodbc=1.3.17+ds-2 \
+    libkrb5-dev=1.20.1-2 libmariadb-dev=1:10.11.3-1 \
+ && apt-get -y install --no-install-recommends screen=4.9.0-4 vim=2:9.0.1378-2 less=590-2 sqlite3=3.40.1-2 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/
-RUN git clone -b 3.57.5 https://github.com/OS2mo/os2mo-data-import-and-export \
+RUN git clone -b 4.54.6 https://github.com/OS2mo/os2mo-data-import-and-export \
  && pip3 install --no-cache-dir poetry==${POETRY_VERSION}
 
 WORKDIR /opt/os2mo-data-import-and-export/integrations/SD_Lon
