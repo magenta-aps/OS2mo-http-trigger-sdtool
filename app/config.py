@@ -8,7 +8,7 @@ from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, SecretStr, root_validato
 from pydantic.tools import parse_obj_as
 
 
-class Settings(BaseSettings):
+class Settings(BaseSettings):  # type: ignore
     mora_url: AnyHttpUrl = parse_obj_as(AnyHttpUrl, "https://morademo.magenta.dk/")
     saml_token: Optional[UUID] = None
 
@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     sd_base_url: HttpUrl = parse_obj_as(HttpUrl, "https://service.sd.dk/sdws/")
     sd_too_deep: List[str] = []
 
-    @root_validator
+    @root_validator  # type: ignore
     def all_keycloak_settings_must_be_set_if_client_secret_is_set(
         cls, values: Dict[str, Any]
     ):
