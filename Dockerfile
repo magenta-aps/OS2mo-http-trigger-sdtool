@@ -7,14 +7,12 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 ENV POETRY_VERSION="1.3.2"
 
 RUN apt-get update \
- && apt-get -y install --no-install-recommends unixodbc-dev \
-    freetds-dev unixodbc tdsodbc libkrb5-dev libmariadb-dev \
+ && apt-get -y install --no-install-recommends unixodbc-dev=2.3.11-2+deb12u1 \
+    freetds-dev=1.3.17+ds-2 unixodbc=2.3.11-2+deb12u1 tdsodbc=1.3.17+ds-2 \
+    libkrb5-dev=1.20.1-2 libmariadb-dev=1:10.11.3-1 \
+ && apt-get -y install --no-install-recommends screen=4.9.0-4 vim=2:9.0.1378-2 less=590-2 sqlite3=3.40.1-2 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
-
-# These need to be installed manually ALL THE TIME for debugging, so let's
-# include them here for now until we have a more stable application
-RUN apt install -y vim sqlite3 screen
 
 WORKDIR /opt/
 RUN git clone -b 4.54.6 https://github.com/OS2mo/os2mo-data-import-and-export \
